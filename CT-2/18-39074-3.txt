@@ -1,0 +1,103 @@
+User: Manager
+Password:Health_Gym
+CREATE TABLE Trainer (
+    t_id NUMBER(10) PRIMARY KEY,
+    t_name VARCHAR2(50),
+    t_address VARCHAR2(100),
+    salary NUMBER(10, 2),
+    specialty VARCHAR2(50)
+);
+
+CREATE TABLE Member (
+    m_id NUMBER(10) PRIMARY KEY,
+    m_name VARCHAR2(50),
+    m_address VARCHAR2(100),
+    bill NUMBER(10, 2),
+    t_id NUMBER(10),
+    CONSTRAINT fk_trainer FOREIGN KEY (t_id) REFERENCES Trainer(t_id)
+);
+
+Trainer table
+INSERT INTO Trainer (t_id, t_name, t_address, salary, specialty)
+VALUES (1, 'Rahim', 'Banani', 5000, 'Body building');
+
+INSERT INTO Trainer (t_id, t_name, t_address, salary, specialty)
+VALUES (2, 'Karim', 'Gulshan', 5000, 'weight_loss_transformation');
+
+INSERT INTO Trainer (t_id, t_name, t_address, salary, specialty)
+VALUES (3, 'Prioty', 'Dhanmondi', 6000, 'fitness');
+
+ Member table
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (1, 'Asif', 'Dhanmondi', 500, 2);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (2, 'Rifat', 'Gulshan', 800, 1);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (3, 'Sadia', 'Basundhora', 600, 3);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (4, 'Redowan', 'Basundhora', 700, 1);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (5, 'Fahmida', 'Khilkhet', 400, 3);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (6, 'Afifa', 'Uttara', 500, 3);
+
+INSERT INTO Member (m_id, m_name, m_address, bill, t_id)
+VALUES (7, 'Sayed', 'Dhanmondi', 500, 2);
+
+
+1.(ORA-01031: insufficient privileges)CREATE SEQUENCE member_seq
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 67
+    NOCACHE
+    NOCYCLE;
+
+UPDATE Member
+SET m_id = member_seq.NEXTVAL;
+
+GRANT UPDATE ON Member TO Manager;
+
+
+2.ALTER TABLE Member RENAME TO Members;
+
+3.SELECT m_name
+FROM Members
+WHERE bill = (SELECT MAX(bill) FROM Member);
+
+4.SELECT m_name
+FROM Members
+ORDER BY bill ASC;
+
+5.SELECT m_name
+FROM Members
+WHERE m_name LIKE 'A%';
+
+6.SELECT T.t_name AS Trainer, T.specialty, M.m_name AS Members
+FROM trainer T
+INNER JOIN Members M ON T.t_id = M.t_id
+WHERE T.t_id = 3;
+
+7.SELECT M.m_name AS Members, M.m_address AS Address
+FROM Members M
+INNER JOIN trainer T ON M.t_id = T.t_id
+WHERE T.t_name = 'Prioty';
+
+8.CREATE VIEW trainer_vw AS
+SELECT t_id, t_name AS Trainer, specialty
+FROM trainer;
+
+9.SELECT Trainer, specialty
+FROM trainer_vw;
+
+10.CREATE VIEW Info AS
+SELECT T.t_name AS Trainer, T.specialty AS Specialty, M.m_name AS Members
+FROM trainer T
+INNER JOIN Members M ON T.t_id = M.t_id;
+
+
+

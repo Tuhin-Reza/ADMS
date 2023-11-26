@@ -1,0 +1,193 @@
+Class Test 01:
+
+1.
+SELECT JOB, HIREDATE 
+FROM EMP 
+WHERE (DEPTNO, HIREDATE) IN 
+(SELECT DEPTNO, MIN(HIREDATE) 
+FROM EMP 
+GROUP BY DEPTNO)
+ORDER BY HIREDATE DESC;
+
+2.
+SELECT TO_CHAR(SYSDATE, 'Day HH24:MI:SS') AS "Day and Time" 
+FROM DUAL;
+
+3.
+SELECT ENAME, SAL, 
+CASE WHEN DEPTNO = 10 THEN SAL+1000
+WHEN DEPTNO = 20 THEN SAL+2000
+ELSE SAL+3000 END AS "Dream Salary"
+FROM EMP
+ORDER BY "Dream Salary" ASC;
+
+4.
+SELECT CASE WHEN MOD(2016, 4) = 0 AND (MOD(2016, 100) != 0 OR MOD(2016, 400) = 0) 
+THEN 'Leap Year' 
+ELSE 'Not a Leap Year' END AS "Year Check"
+FROM DUAL;
+
+5.
+SELECT ENAME, JOB 
+FROM EMP 
+WHERE JOB IN ('MANAGER', 'CLERK', 'ANALYST');
+
+6.
+SELECT ENAME 
+FROM EMP 
+WHERE INSTR(ENAME, 'M') > 0;
+
+7.
+SELECT ENAME 
+FROM EMP 
+WHERE (ENAME LIKE '%LL%' OR ENAME LIKE '%TT%') AND INSTR(ENAME, 'LL', 1, 2) - INSTR(ENAME, 'LL') = 1 OR INSTR(ENAME, 'TT', 1, 2) - INSTR(ENAME, 'TT') = 1;
+
+8.
+SELECT RTRIM('00abc000', '0') 
+FROM DUAL;
+
+9.
+CREATE TABLE Teacher (
+t_id NUMBER(10),
+t_name VARCHAR2(20),
+phone NUMBER(10),
+salary NUMBER(7),
+email VARCHAR2(30)
+);
+
+
+Subquery:
+1.
+SELECT ENAME 
+FROM EMP 
+WHERE HIREDATE > (SELECT HIREDATE FROM EMP WHERE ENAME = 'KING');
+
+2.
+SELECT ENAME 
+FROM EMP 
+WHERE SAL > ALL (SELECT SAL FROM EMP WHERE JOB = 'CLERK');
+
+3.
+SELECT ENAME 
+FROM EMP 
+WHERE SAL > ANY (SELECT SAL FROM EMP WHERE JOB = 'CLERK');
+
+4.
+SELECT ENAME 
+FROM EMP e1
+WHERE SAL >= ALL (SELECT SAL FROM EMP e2 WHERE e1.DEPTNO = e2.DEPTNO);
+
+5.
+SELECT ENAME 
+FROM EMP 
+WHERE SAL > (SELECT SAL FROM EMP WHERE ENAME = 'SMITH');
+
+
+Joining:
+1.
+SELECT e.ENAME 
+FROM EMP e
+JOIN DEPT d ON e.DEPTNO = d.DEPTNO
+WHERE d.LOC = 'DALLAS';
+
+2.
+SELECT e1.ENAME 
+FROM EMP e1
+JOIN EMP e2 ON e1.MGR = e2.EMPNO
+WHERE e1.HIREDATE < e2.HIREDATE;
+
+3.
+SELECT e1.ENAME, COALESCE(e2.ENAME, 'NO MANAGER') AS MANAGER 
+FROM EMP e1
+LEFT JOIN EMP e2 ON e1.MGR = e2.EMPNO;
+
+4.
+SELECT e.ENAME, s.GRADE
+FROM EMP e
+JOIN SALGRADE s ON e.SAL BETWEEN s.LOSAL AND s.HISAL;
+
+5.
+SELECT e.ENAME, e.DEPTNO, d.DNAME 
+FROM EMP e
+JOIN DEPT d ON e.DEPTNO = d.DEPTNO;
+
+
+Schema Diagram:
+
+Publishers:
+CREATE TABLE publishers (
+pubid INT PRIMARY KEY,
+pname VARCHAR2(100),
+email VARCHAR2(100),
+phone VARCHAR2(20)
+);
+INSERT INTO publishers VALUES (1, 'Publisher A', 'puba@email.com', '123-456-7890');
+INSERT INTO publishers VALUES (2, 'Publisher B', 'pubb@email.com', '123-456-7891');
+INSERT INTO publishers VALUES (3, 'Publisher C', 'pubc@email.com', '123-456-7892');
+INSERT INTO publishers VALUES (4, 'Publisher D', 'pubd@email.com', '123-456-7893');
+INSERT INTO publishers VALUES (5, 'Publisher E', 'pube@email.com', '123-456-7894');
+
+Subjects:
+CREATE TABLE subjects (
+subid INT PRIMARY KEY,
+sname VARCHAR2(100)
+);
+INSERT INTO subjects VALUES (1, 'Math');
+INSERT INTO subjects VALUES (2, 'Science');
+INSERT INTO subjects VALUES (3, 'History');
+INSERT INTO subjects VALUES (4, 'Literature');
+INSERT INTO subjects VALUES (5, 'Art');
+
+
+Titles:
+CREATE TABLE titles (
+titleid INT PRIMARY KEY,
+title VARCHAR2(200),
+pubid INT,
+subid INT,
+pubdate DATE,
+cover VARCHAR2(100),
+price DECIMAL(10, 2),
+FOREIGN KEY (pubid) REFERENCES publishers(pubid),
+FOREIGN KEY (subid) REFERENCES subjects(subid)
+);
+INSERT INTO titles VALUES (1, 'Math Book', 1, 1, TO_DATE('2023-01-01', 'YYYY-MM-DD'), 'CoverA.jpg', 19.99);
+INSERT INTO titles VALUES (2, 'Science Book', 2, 2, TO_DATE('2023-01-02', 'YYYY-MM-DD'), 'CoverB.jpg', 29.99);
+INSERT INTO titles VALUES (3, 'History Book', 3, 3, TO_DATE('2023-01-03', 'YYYY-MM-DD'), 'CoverC.jpg', 24.99);
+INSERT INTO titles VALUES (4, 'Literature Book', 4, 4, TO_DATE('2023-01-04', 'YYYY-MM-DD'), 'CoverD.jpg', 14.99);
+INSERT INTO titles VALUES (5, 'Art Book', 5, 5, TO_DATE('2023-01-05', 'YYYY-MM-DD'), 'CoverE.jpg', 34.99);
+
+Authors:
+CREATE TABLE authors (
+auid INT PRIMARY KEY,
+aname VARCHAR2(100),
+email VARCHAR2(100),
+phone VARCHAR2(20)
+);
+INSERT INTO authors VALUES (1, 'Author A', 'authora@email.com', '987-654-3210');
+INSERT INTO authors VALUES (2, 'Author B', 'authorb@email.com', '987-654-3211');
+INSERT INTO authors VALUES (3, 'Author C', 'authorc@email.com', '987-654-3212');
+INSERT INTO authors VALUES (4, 'Author D', 'authord@email.com', '987-654-3213');
+INSERT INTO authors VALUES (5, 'Author E', 'authore@email.com', '987-654-3214');
+
+
+Titleauthors:
+CREATE TABLE titleauthors (
+titleid INT,
+authid INT,
+importance INT,
+PRIMARY KEY (titleid, authid),
+FOREIGN KEY (titleid) REFERENCES titles(titleid),
+FOREIGN KEY (authid) REFERENCES authors(auid)
+);
+INSERT INTO titleauthors VALUES (1, 1, 1);
+INSERT INTO titleauthors VALUES (2, 2, 2);
+INSERT INTO titleauthors VALUES (3, 3, 3);
+INSERT INTO titleauthors VALUES (4, 4, 1);
+INSERT INTO titleauthors VALUES (5, 5, 2);
+
+
+
+
+
+

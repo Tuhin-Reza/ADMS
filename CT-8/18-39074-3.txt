@@ -1,0 +1,100 @@
+select * from emp
+select * from dept
+select * from bonus
+select * from salgrade
+----------------------------------------------------------------------------------------
+1.
+SELECT ENAME
+FROM EMP
+JOIN DEPT ON EMP.DEPTNO = DEPT.DEPTNO
+WHERE LOC = 'BOSTON';
+----------------------------------------------------------------------------------------
+2.
+SELECT E.ENAME
+FROM EMP E
+JOIN EMP M ON E.MGR = M.EMPNO
+WHERE E.HIREDATE > M.HIREDATE;
+----------------------------------------------------------------------------------------
+3.
+SELECT E.ENAME, NVL(M.ENAME, 'NONE') AS MANAGER
+FROM EMP E
+LEFT JOIN EMP M ON E.MGR = M.EMPNO;
+----------------------------------------------------------------------------------------
+4.
+SELECT E.ENAME, E.HIREDATE, S.GRADE
+FROM EMP E
+JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL;
+----------------------------------------------------------------------------------------
+5.
+SELECT E.ENAME, E.DEPTNO, D.DNAME, D.LOC
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO;
+----------------------------------------------------------------------------------------
+{Create the loan table}
+CREATE TABLE loan (
+loan_number VARCHAR(10),
+branch_name VARCHAR(50),
+amount NUMBER
+);
+----------------------------------------------------------------------------------------
+{Insert data into the loan table}
+INSERT INTO loan (loan_number, branch_name, amount) VALUES ('L-170', 'Downtown', 3000);
+INSERT INTO loan (loan_number, branch_name, amount) VALUES ('L-230', 'Redwood', 4000);
+INSERT INTO loan (loan_number, branch_name, amount) VALUES ('L-260', 'Perryridge', 1700);
+
+----------------------------------------------------------------------------------------
+{Create the borrower table}
+CREATE TABLE borrower (
+customer_name VARCHAR(50),
+loan_number VARCHAR(10)
+);
+----------------------------------------------------------------------------------------
+{Insert data into the borrower table}
+INSERT INTO borrower (customer_name, loan_number) VALUES ('Jones', 'L-170');
+INSERT INTO borrower (customer_name, loan_number) VALUES ('Smith', 'L-230');
+INSERT INTO borrower (customer_name, loan_number) VALUES ('Hayes', 'L-155');
+----------------------------------------------------------------------------------------
+Left Outer Join:
+SELECT borrower.customer_name, loan.loan_number, loan.branch_name, loan.amount
+FROM borrower
+LEFT JOIN loan ON borrower.loan_number = loan.loan_number;
+----------------------------------------------------------------------------------------
+Right Outer Join:
+SELECT borrower.customer_name, loan.loan_number, loan.branch_name, loan.amount
+FROM borrower
+RIGHT JOIN loan ON borrower.loan_number = loan.loan_number;
+----------------------------------------------------------------------------------------
+Full Outer Join:
+SELECT borrower.customer_name, loan.loan_number, loan.branch_name, loan.amount
+FROM borrower
+FULL OUTER JOIN loan ON borrower.loan_number = loan.loan_number;
+----------------------------------------------------------------------------------------
+7.
+SELECT emp.ename, salgrade.grade
+FROM emp
+CROSS JOIN salgrade;
+----------------------------------------------------------------------------------------
+8.
+SELECT emp.ename, dept.dname
+FROM emp
+NATURAL JOIN dept
+WHERE dept.dname = 'ACCOUNTING';
+----------------------------------------------------------------------------------------
+9.
+SELECT emp.ename, dept.dname
+FROM emp
+JOIN dept
+USING (deptno)
+WHERE deptno<>20;
+----------------------------------------------------------------------------------------
+10.
+SELECT emp.ename, dept.dname, emp.sal
+FROM emp
+JOIN dept ON emp.deptno = dept.deptno;
+----------------------------------------------------------------------------------------
+
+
+
+
+
+

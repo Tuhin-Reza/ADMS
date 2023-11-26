@@ -1,0 +1,99 @@
+----------------------------------------------------------------------------------------
+1.Create three roles
+CREATE ROLE Director;
+CREATE ROLE Head;
+CREATE ROLE Teacher;
+----------------------------------------------------------------------------------------
+2.Create users with passwords and assign roles
+CREATE USER Sam IDENTIFIED BY dean;
+GRANT CONNECT, RESOURCE TO Sam;
+GRANT Director TO Sam;
+----------------------------------------------------------------------------------------
+CREATE USER Sheldon IDENTIFIED BY amy;
+GRANT CONNECT, RESOURCE TO Sheldon;
+GRANT Head TO Sheldon;
+----------------------------------------------------------------------------------------
+CREATE USER Oliver IDENTIFIED BY twist;
+GRANT CONNECT, RESOURCE TO Oliver;
+GRANT Teacher TO Oliver;
+----------------------------------------------------------------------------------------
+CREATE USER Emma IDENTIFIED BY henry;
+GRANT CONNECT, RESOURCE TO Emma;
+GRANT Teacher TO Emma;
+----------------------------------------------------------------------------------------
+CREATE USER Harry IDENTIFIED BY ginny;
+GRANT CONNECT, RESOURCE TO Harry;
+GRANT Teacher TO Harry;
+----------------------------------------------------------------------------------------
+3.Create a complex view that displays employee names and department names
+CREATE VIEW EmployeeDepartment AS
+SELECT T.T_NAME AS EmployeeName, D.D_NAME AS DepartmentName
+FROM Teacher T
+JOIN Department D ON T.D_ID = D.D_ID;
+----------------------------------------------------------------------------------------
+
+Now: User Sam Create all tables(Director):
+----------------------------------------------------------------------------------------
+1)Create Sequence for generating primary keys:
+CREATE SEQUENCE department_seq START WITH 1;
+----------------------------------------------------------------------------------------
+2)Create the Department table
+CREATE TABLE Department (
+D_ID NUMBER,
+D_NAME VARCHAR2(50) NOT NULL
+);
+ALTER TABLE Department
+ADD CONSTRAINT unique_d_id UNIQUE (D_ID);
+----------------------------------------------------------------------------------------
+2.1){Set up a trigger to populate D_ID using the sequence}
+CREATE OR REPLACE TRIGGER department_seq_trigger
+BEFORE INSERT ON Department
+FOR EACH ROW
+BEGIN
+    SELECT department_seq.NEXTVAL INTO :new.D_ID FROM dual;
+END;
+----------------------------------------------------------------------------------------
+3.{Insert data into the Department table (no need to specify D_ID)}
+INSERT INTO Department (D_NAME) VALUES ('CS');
+INSERT INTO Department (D_NAME) VALUES ('EEE');
+INSERT INTO Department (D_NAME) VALUES ('BBA');
+INSERT INTO Department (D_NAME) VALUES ('LAW');
+INSERT INTO Department (D_NAME) VALUES ('ENGLISH');
+SELECT * FROM DEPARTMENT
+----------------------------------------------------------------------------------------
+4)Create an index on D_NAME column
+CREATE INDEX idx_department_dname ON Department(D_NAME);
+----------------------------------------------------------------------------------------
+5)Create Sequence for generating primary keys for Teacher table
+CREATE SEQUENCE new_teacher_seq START WITH 11 INCREMENT BY 11;
+----------------------------------------------------------------------------------------
+6)Create the Teacher table
+CREATE TABLE Teacher (
+T_ID NUMBER,
+T_NAME VARCHAR2(50) NOT NULL,
+SKILL VARCHAR2(50) NOT NULL,
+D_ID NUMBER NOT NULL,
+CONSTRAINT pk_teacher PRIMARY KEY (T_ID),
+CONSTRAINT fk_department FOREIGN KEY (D_ID) REFERENCES Department(D_ID)
+);
+6.1{Set up a trigger to populate T_ID using the sequence}
+CREATE OR REPLACE TRIGGER teacher_seq_trigger
+BEFORE INSERT ON Teacher
+FOR EACH ROW
+BEGIN
+SELECT new_teacher_seq.NEXTVAL INTO :new.T_ID FROM dual;
+END;
+----------------------------------------------------------------------------------------
+7){Insert data into the Teacher table}
+INSERT INTO Teacher (T_NAME, SKILL, D_ID) VALUES ('Sam', 'с', 1);
+INSERT INTO Teacher (T_NAME, SKILL, D_ID) VALUES ('Sheldon', 'Finance', 2);
+INSERT INTO Teacher (T_NAME, SKILL, D_ID) VALUES ('Oliver', 'Circuits', 3);
+INSERT INTO Teacher (T_NAME, SKILL, D_ID) VALUES ('Emma', 'Criminology', 4);
+INSERT INTO Teacher (T_NAME, SKILL, D_ID) VALUES ('Harry', 'Poetry', 5);
+SELECT * FROM TEACHER
+DROP TABLE TEACHER
+----------------------------------------------------------------------------------------
+7)Create an index on T_NAME column
+CREATE INDEX idx_teacher_tname ON Teacher(T_NAME);
+
+

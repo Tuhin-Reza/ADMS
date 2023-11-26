@@ -1,0 +1,79 @@
+----------------------------------------------------------------------------------------
+1.a}-Create the House table
+CREATE TABLE House (
+H_Id NUMBER PRIMARY KEY,
+H_Name VARCHAR2(50)
+);
+----------------------------------------------------------------------------------------
+a-Insert}-Insert data into the House table
+INSERT INTO House (H_Id, H_Name) VALUES (11, 'Gryffindor');
+INSERT INTO House (H_Id, H_Name) VALUES (22, 'Hufflepuff');
+INSERT INTO House (H_Id, H_Name) VALUES (33, 'Ravenclaw');
+INSERT INTO House (H_Id, H_Name) VALUES (44, 'Slytherin');
+INSERT INTO House (H_Id, H_Name) VALUES (55, 'Harry');
+----------------------------------------------------------------------------------------
+b}-Create the Student table with S_Id as a sequence
+CREATE TABLE Student (
+S_Id NUMBER PRIMARY KEY,
+S_Name VARCHAR2(50),
+H_No NUMBER,
+FOREIGN KEY (H_No) REFERENCES House(H_Id)
+);
+----------------------------------------------------------------------------------------
+b-Sequence}-Create a sequence for S_Id
+CREATE SEQUENCE student_seq
+START WITH 2
+INCREMENT BY 5
+MAXVALUE 97
+NOCACHE
+NOCYCLE;
+----------------------------------------------------------------------------------------
+b-Insert}-Insert data into the Student table
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Harry', 11);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Ron', 11);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Hannah', 22);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Cedric', 22);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Cho', 33);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Luna', 33);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Draco', 44);
+INSERT INTO Student (S_Id, S_Name, H_No) VALUES (student_seq.NEXTVAL, 'Goyle', 44);
+select * from Student
+----------------------------------------------------------------------------------------
+2.
+CREATE INDEX student_idx ON Student(S_Id, S_Name);
+----------------------------------------------------------------------------------------
+3.
+SELECT S_Name
+FROM Student
+WHERE S_Id > (SELECT S_Id FROM Student WHERE S_Name = 'Cedric' AND ROWNUM = 1);
+
+----------------------------------------------------------------------------------------
+4.
+SELECT S.S_Name, H.H_Name 
+FROM Student S INNER JOIN House H ON S.H_No = H.H_Id;
+----------------------------------------------------------------------------------------
+5.
+CREATE VIEW Student_Name_View
+AS SELECT S_Name 
+FROM Student;
+----------------------------------------------------------------------------------------
+6.
+(Disable auto commit)
+SET AUTOCOMMIT OFF;
+(Delete the view)
+DROP VIEW Student_Name_View;
+(Commit the transaction (if you want to delete)
+COMMIT;
+----------------------------------------------------------------------------------------
+7.
+(Rollback the previous transaction)
+ROLLBACK;
+(Recreate the view)
+CREATE VIEW Student_Name_View AS SELECT S_Name FROM Student;
+----------------------------------------------------------------------------------------
+8.
+CREATE SYNONYM Student_Names FOR Student_Name_View;
+----------------------------------------------------------------------------------------
+
+
+

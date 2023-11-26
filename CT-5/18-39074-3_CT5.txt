@@ -1,0 +1,117 @@
+--User Created:
+CREATE USER Dumbledore
+  IDENTIFIED BY Phoenix
+  DEFAULT TABLESPACE USERS
+  TEMPORARY TABLESPACE TEMP
+  QUOTA UNLIMITED ON USERS;
+
+GRANT CREATE SESSION TO Dumbledore;
+GRANT CREATE TABLE TO Dumbledore;
+
+--Create the House table
+CREATE TABLE House (
+  H_Id NUMBER PRIMARY KEY,
+  H_Name VARCHAR2(50) NOT NULL,
+  H_Points NUMBER
+);
+
+--Create the Student Table
+CREATE TABLE Student (
+  S_Id NUMBER PRIMARY KEY,
+  S_Name VARCHAR2(50),
+  S_CGPA NUMBER(4, 2) CHECK (S_CGPA <= 4.00),
+  S_BloodStatus VARCHAR2(50),
+  H_No NUMBER,
+  CONSTRAINT fk_House FOREIGN KEY (H_No) REFERENCES House(H_Id)
+);
+
+--Insert data into the House table:
+INSERT INTO House (H_Id, H_Name, H_Points)
+VALUES (11, 'Gryffindor', 892);
+
+INSERT INTO House (H_Id, H_Name, H_Points)
+VALUES (22, 'Hufflepuff', 785);
+
+INSERT INTO House (H_Id, H_Name, H_Points)
+VALUES (33, 'Ravenclaw', 789);
+
+INSERT INTO House (H_Id, H_Name, H_Points)
+VALUES (44, 'Slytherin', 850);
+
+--Insert data into the Student table:
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (2, 'Harry', 3.45, 'Halfblood', 11);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (7, 'Ron', 3.01, 'Pureblood', 11);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (12, 'Hannah', NULL, 'Pureblood', 22);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (17, 'Cedric', 3.78, 'Pureblood', 22);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (22, 'Cho', 3.55, 'Muggleborn', 33);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (27, 'Luna', 2.89, NULL, 33);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (32, 'Draco', 3.88, 'Pureblood', 44);
+
+INSERT INTO Student (S_Id, S_Name, S_CGPA, S_BloodStatus, H_No)
+VALUES (37, 'Goyle', 2.10, 'Pureblood', 44);
+
+
+
+-Using ARITHMETIC operator:
+Question: Find the average CGPA of students.
+Answer:SELECT AVG(S_CGPA) AS Average_CGPA FROM Student
+
+-Using CONCATENATION operator:
+Question: Display the full name of students by concatenating their first and last names.
+Answer:SELECT S_Name AS "Full Name", S_Name || ' ' || S_Name AS "Concatenated Name" FROM Student
+
+-Using COLUMN ALIAS:
+Question: List the house names and their corresponding points.
+Answer:SELECT H_Name AS "House Name", H_Points AS "Points" FROM House
+
+-Using LIKE operator:
+Question: Find students whose names start with 'H'.
+Answer:SELECT S_Name FROM Student WHERE S_Name LIKE 'H%'
+
+-Using IS NULL operator:
+Question: List students with unknown blood status (i.e., where S_BloodStatus is NULL).
+Answer:SELECT S_Name FROM Student WHERE S_BloodStatus IS NULL
+
+-Using ORDER BY clause:
+Question: Display students' names in ascending order.
+Answer:SELECT S_Name FROM Student ORDER BY S_Name ASC
+
+-Using SUBSTR function:
+Question: Extract the first three characters of the house name for each house.
+Answer:SELECT H_Name, SUBSTR(H_Name, 1, 3) AS "Abbreviation" FROM House
+
+-Using NVL function:
+Question: Display the house names and their points. If points are NULL, display 'N/A'.
+Answer:SELECT H_Name, NVL(TO_CHAR(H_Points), 'N/A') AS "Points" FROM House
+
+-Using MAX function:
+Question: Find the highest CGPA among students.
+Answer:SELECT MAX(S_CGPA) AS "Highest CGPA" FROM Student
+
+-Using SUM function:
+Question: Calculate the total house points for all houses.
+Answer:SELECT SUM(H_Points) AS "Total House Points" FROM House
+
+-Using GROUP BY clause:
+Question: Count the number of students in each house.
+Answer:SELECT H_No, COUNT(*) AS "Number of Students" FROM Student GROUP BY H_No
+
+-Using HAVING clause:
+Question: List houses with more than two students.
+Answer:SELECT H_No, COUNT(*) AS "Number of Students" FROM Student GROUP BY H_No HAVING COUNT(*) > 2
+
+
+
